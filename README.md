@@ -16,6 +16,17 @@ pyproject.toml           # Python project configuration
 - Python 3.8 or higher
 - `uv` package manager (recommended over pip for faster dependency management)
 
+### Creating and Activating Virtual Environment
+
+It is recommended to use a virtual environment for isolation:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+After activation, you can use `uv` commands directly.
+
 ### Installation
 
 1. **Clone the repository**
@@ -28,7 +39,7 @@ pyproject.toml           # Python project configuration
 2. **Install uv (if not already installed)**
 
    ```bash
-   # Using pip
+   # Using pip inside your virtual environment
    pip install uv
 
    # Or using curl (for Unix-based systems)
@@ -44,6 +55,8 @@ pyproject.toml           # Python project configuration
    # Or add specific packages
    uv add openai
    ```
+
+If you encounter 'command not found' for `uv`, ensure your virtual environment is activated and `uv` is installed inside `.venv`.
 
 ## Running the Project
 
