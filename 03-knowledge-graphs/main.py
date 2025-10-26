@@ -58,37 +58,49 @@ client = OpenAI(
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 )
 
-# Persistent conversation history
-messages = [
-    {"role": "system", "content": "You are a helpful assistant."}
-]
+# Persistent chat memory
+messages = []
 
 
 def chatWithAi(message):
-    # Retrieve context from memory
+    # Retrieve contextual memories
     mem_result = mem_client.search(query=message, user_id="Shreyas Prabhu")
-    memory_context = [res["memory"] for res in mem_result.get("results", [])]
+    memories = [res["memory"] for res in mem_result.get("results", [])]
 
-    if memory_context:
-        print("🧠 Retrieved from memory:", memory_context)
-        messages.append({
-            "role": "system",
-            "content": f"Relevant context from memory: {memory_context}"
-        })
+    if memories:
+        print("🧠 Retrieved from memory:", memories)
 
-    # Append user message
-    messages.append({"role": "user", "content": message})
+    # --- Construct dynamic system prompt ---
+    SYSTEM_PROMPT = f"""
+    You are a Memory-Aware Fact Extraction Agent, an advanced AI designed to
+    systematically analyze input content, extract structured knowledge, and maintain an
+    optimized memory store. Your primary function is information distillation
+    and knowledge preservation with contextual awareness.
+
+    Tone: Professional analytical, precision-focused, with clear uncertainty signaling.
+
+    Memory and Score:
+    {memories}
+    """
+
+    # --- Build full chat messages ---
+    chat_messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        *messages,  # include prior conversation
+        {"role": "user", "content": message},
+    ]
 
     # --- Send to Gemini (via OpenAI SDK) ---
     response = client.chat.completions.create(
         model="gemini-2.5-flash",
-        messages=messages
+        messages=chat_messages
     )
 
     reply = response.choices[0].message.content
     print("🤖:", reply)
 
-    # Append assistant reply
+    # Append to persistent messages for context continuity
+    messages.append({"role": "user", "content": message})
     messages.append({"role": "assistant", "content": reply})
 
     # --- Save conversation to memory ---
