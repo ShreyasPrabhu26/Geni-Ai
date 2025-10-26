@@ -6,11 +6,16 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "dotenv>=0.9.9",
+    "google-genai>=1.46.0",
     "langchain-community>=0.3.30",
     "langchain-google-genai>=2.1.12",
+    "langchain-neo4j>=0.5.0",
     "langchain-qdrant>=0.2.1",
     "langchain-text-splitters>=0.3.11",
+    "mem0ai>=1.0.0",
     "openai>=1.99.7",
+    "pip>=25.3",
     "pypdf>=6.1.1",
+    "rank-bm25>=0.2.2",
     "tiktoken>=0.11.0",
 ]
