@@ -1,17 +1,21 @@
 import os
-from mem0 import Memory
-from google import genai
 from dotenv import load_dotenv
+from openai import OpenAI
+from mem0 import Memory
 
+# Load environment variables
 load_dotenv()
 
+# --- API Keys ---
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
+# --- Local configurations ---
 QUADRANT_HOST = "localhost"
 NEO4J_URL = "bolt://localhost:7687"
 NEO4J_USERNAME = "neo4j"
 NEO4J_PASSWORD = "reform-william-center-vibrate-press-5829"
 
+# --- Memory configuration ---
 config = {
     "version": "v1.1",
     "embedder": {
@@ -46,29 +50,60 @@ config = {
     },
 }
 
+# --- Initialize memory and LLM clients ---
 mem_client = Memory.from_config(config)
-client = genai.Client()
-chat = client.chats.create(model="gemini-2.5-flash")
 
-# Persistent message list
-messages = []
+client = OpenAI(
+    api_key=GOOGLE_API_KEY,
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+)
+
+# Persistent conversation history
+messages = [
+    {"role": "system", "content": "You are a helpful assistant."}
+]
 
 
 def chatWithAi(message):
+    # Retrieve context from memory
+    mem_result = mem_client.search(query=message, user_id="Shreyas Prabhu")
+    memory_context = [res["memory"] for res in mem_result.get("results", [])]
+
+    if memory_context:
+        print("🧠 Retrieved from memory:", memory_context)
+        messages.append({
+            "role": "system",
+            "content": f"Relevant context from memory: {memory_context}"
+        })
+
+    # Append user message
     messages.append({"role": "user", "content": message})
 
-    # Send message to AI
-    response = chat.send_message(message)
-    reply = response.text
+    # --- Send to Gemini (via OpenAI SDK) ---
+    response = client.chat.completions.create(
+        model="gemini-2.5-flash",
+        messages=messages
+    )
+
+    reply = response.choices[0].message.content
     print("🤖:", reply)
+
+    # Append assistant reply
     messages.append({"role": "assistant", "content": reply})
 
-    # Store full chat context
+    # --- Save conversation to memory ---
     mem_client.add(messages, user_id="Shreyas Prabhu")
 
 
-while True:
-    user_input = input("👨🏻‍💻:")
-    if user_input.lower() in ["exit", "quit"]:
-        break
-    chatWithAi(user_input)
+if __name__ == "__main__":
+    print("🤖 Gemini Memory Chat (Ctrl+C or type 'exit' to quit)\n")
+    while True:
+        try:
+            user_input = input("👨🏻‍💻: ")
+            if user_input.lower() in ["exit", "quit"]:
+                break
+            chatWithAi(user_input)
+        except KeyboardInterrupt:
+            break
+        except Exception as e:
+            print("⚠️ Error:", e)
