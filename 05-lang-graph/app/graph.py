@@ -5,13 +5,27 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import StateGraph, START, END
 import os
 from dotenv import load_dotenv
-
+from langgraph.types import interrupt
+from langchain_core.tools import tool
+from langchain.chat_models import init_chat_model
 
 load_dotenv()
 
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-pro", google_api_key=os.getenv("GOOGLE_API_KEY"))
+@tool()
+def human_assitance_tool(query: str):
+    """Request assistance from a human"""
+    human_reponse = interrupt({"query": query})
+    return human_reponse["data"]
+
+
+tools = [human_assitance_tool]
+
+llm = init_chat_model(
+    model_provider="google_genai",
+    model="gemini-2.5-pro",
+)
+llm_with_tools = llm.bind_tools(tools=tools)
 
 
 class State(TypedDict):
