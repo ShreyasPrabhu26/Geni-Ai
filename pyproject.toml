@@ -22,7 +22,6 @@ dependencies = [
     "openai>=1.99.7",
     "pip>=25.3",
     "pipwin>=0.5.2",
-    "pocketsphinx>=5.0.4",
     "pyaudio",
     "pymongo>=4.15.3",
     "pypdf>=6.1.1",

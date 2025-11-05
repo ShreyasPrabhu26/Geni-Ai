@@ -4,13 +4,16 @@ from typing import Annotated
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.prebuilt import ToolNode, tools_condition
 import os
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-pro",
+    model="gemini-2.5-flash",
     google_api_key=os.getenv("GOOGLE_API_KEY")
 )
 

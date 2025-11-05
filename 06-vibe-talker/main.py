@@ -11,7 +11,7 @@ config = {"configurable": {"thread_id": "1"}}
 def main():
     with MongoDBSaver.from_conn_string(MONGODB_URI) as checkpointer: 
         graph = create_chat_graph(checkpointer=checkpointer) 
-
+        print("\n\nStart talking:")
         success, result = listen_and_recognize()
         if success:
             print("Bot said:", result)
