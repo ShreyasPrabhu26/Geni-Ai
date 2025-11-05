@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "dotenv>=0.9.9",
     "google-genai>=1.46.0",
+    "langchain>=1.0.3",
     "langchain-community>=0.3.30",
     "langchain-google-genai>=2.1.12",
     "langchain-google-vertexai>=3.0.1",
@@ -20,8 +21,12 @@ dependencies = [
     "mem0ai>=1.0.0",
     "openai>=1.99.7",
     "pip>=25.3",
+    "pipwin>=0.5.2",
+    "pocketsphinx>=5.0.4",
+    "pyaudio",
     "pymongo>=4.15.3",
     "pypdf>=6.1.1",
     "rank-bm25>=0.2.2",
+    "speechrecognition>=3.14.3",
     "tiktoken>=0.11.0",
 ]
