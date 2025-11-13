@@ -17,7 +17,7 @@ def listen_and_recognize():
         with sr.Microphone() as source:
             print("Listening... (speak now)")
             r.adjust_for_ambient_noise(source, duration=1)
-            r.pause_threshold = 5 #in seconds
+            r.pause_threshold = 3 #in seconds
             audio = r.listen(source)
 
         try:
